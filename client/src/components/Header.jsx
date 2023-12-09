@@ -4,11 +4,13 @@ import { FaSearch } from "react-icons/fa";
 const Header = () => {
   return (
     <div className="bg-slate-200 flex-row p-2 px-[2%]">
-      <Link to="/" className="flex justify-between flex-row items-center">
-        <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-          <span className="text-slate-500 ">Real</span>
-          <span className="text-slate-700 ">Estates</span>
-        </h1>
+      <div className="flex justify-between flex-row items-center">
+        <Link to={"/"}>
+          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
+            <span className="text-slate-500 ">Real</span>
+            <span className="text-slate-700 ">Estates</span>
+          </h1>
+        </Link>
         <form className="bg-slate-100 p-3 rounded-lg flex-item-center flex items-center gap-2">
           <input
             type="text"
@@ -37,7 +39,7 @@ const Header = () => {
             Login
           </Link>
         </ul>
-      </Link>
+      </div>
     </div>
   );
 };

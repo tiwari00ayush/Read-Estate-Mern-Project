@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const SignUp = () => {
   const [formData, setFormData] = useState({});
-  const [username, setUserName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -13,6 +15,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
@@ -21,12 +24,18 @@ const SignUp = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
-      if (data.success == false) {
+      console.log(data.success);
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
         return;
       }
+      setLoading(false);
+      setError(null);
+      navigate("/sign-in");
     } catch (e) {
-      console.log(e);
+      setLoading(false);
+      setError(e.message);
     }
   };
   return (
@@ -109,10 +118,11 @@ const SignUp = () => {
                 </div>
                 <div>
                   <button
+                    disabled={loading}
                     type="submit"
                     class="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                   >
-                    Create Account{" "}
+                    {loading ? "loading..." : "Create Account"}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -131,6 +141,7 @@ const SignUp = () => {
                   </button>
                 </div>
               </div>
+              {error && <p className="text-red-500 mt-5">{error}</p>}
             </form>
             <div class="mt-3 space-y-3">
               <button
