@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 const Header = () => {
   return (
-    <div className="bg-slate-200 flex-row p-2">
+    <div className="bg-slate-200 flex-row p-2 px-[2%]">
       <Link to="/" className="flex justify-between flex-row items-center">
         <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
           <span className="text-slate-500 ">Real</span>
