@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      default: "https://fontawesome.com/icons/user?f=classic&s=solid",
+    },
   },
   {
     timestamps: true,
