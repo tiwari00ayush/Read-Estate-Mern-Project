@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "https://fontawesome.com/icons/user?f=classic&s=solid",
+      default: "https://static.thenounproject.com/png/2766971-200.png",
     },
   },
   {

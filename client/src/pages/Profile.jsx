@@ -6,20 +6,20 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 import { app } from "../firebase";
 export default function Profile() {
+  const navigate = useNavigate();
   const fileRef = useRef(null);
-  const { user } = useUser();
+  const { user, clearUserProfile } = useUser();
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-
-  // firebase storage
-  // allow read;
-  // allow write: if
-  // request.resource.size < 2 * 1024 * 1024 &&
-  // request.resource.contentType.matches('image/.*')
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (file) {
@@ -50,10 +50,51 @@ export default function Profile() {
       }
     );
   };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/user/update/${user._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
+        return;
+      }
+      setLoading(false);
+      setUpdateSuccess(true);
+    } catch (error) {}
+  };
+
+  const handleDelete = async () => {
+    try {
+      console.log(user._id);
+      const res = await fetch(`/api/user/delete/${user._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        return;
+      }
+      console.log(data);
+    } catch (error) {
+      console.log("hello", error);
+    }
+  };
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           onChange={(e) => setFile(e.target.files[0])}
           type="file"
@@ -80,32 +121,53 @@ export default function Profile() {
             ""
           )}
         </p>
+        <span className="text-center">{user.username}</span>
         <input
           type="text"
           placeholder="username"
           id="username"
           className="border p-3 rounded-lg"
+          onChange={handleChange}
         />
         <input
           type="email"
           placeholder="email"
           id="email"
           className="border p-3 rounded-lg"
+          onChange={handleChange}
         />
         <input
           type="text"
           placeholder="password"
           id="password"
           className="border p-3 rounded-lg"
+          onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
-          update
+        <button
+          type="submit"
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? "loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleDelete}>
+          {loading ? "loading..." : "Delete account"}
+        </span>
+        <span
+          className="text-red-700 cursor-pointer"
+          onClick={clearUserProfile}
+        >
+          Sign out
+        </span>
       </div>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "User is updated successfully!" : ""}
+      </p>
+      <p className="text-green-700 mt-5">
+        {deleteSuccess ? "User is deleted successfully!" : ""}
+      </p>
     </div>
   );
 }
