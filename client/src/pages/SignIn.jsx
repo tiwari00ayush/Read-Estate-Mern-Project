@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { useUser } from "../utils/UserContext";
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { setUserProfile } = useUser();
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
@@ -33,6 +35,7 @@ const SignIn = () => {
         console.log(data.message);
         return;
       }
+      setUserProfile(data);
       setLoading(false);
       navigate("/");
     } catch (e) {

@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase.js";
+import { useUser } from "../utils/UserContext";
+
 const OAuth = () => {
+  const { setUserProfile } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,6 +35,7 @@ const OAuth = () => {
         setLoading(false);
         return;
       }
+      setUserProfile(data);
       setLoading(false);
       navigate("/");
     } catch (error) {

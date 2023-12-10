@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { useUser } from "../utils/UserContext";
+
 const Header = () => {
+  const { user, clearUserProfile } = useUser();
   return (
     <div className="bg-slate-200 flex-row p-2 px-[2%]">
       <div className="flex justify-between flex-row items-center">
@@ -33,10 +36,21 @@ const Header = () => {
             About
           </Link>
           <Link
-            to="/sign-in"
+            to="/profile"
             className="text-slate-700 cursor-pointer hover:underline"
           >
-            Login
+            {user ? (
+              <div className="flex gap-4">
+                <img
+                  src={user.avatar}
+                  alt={user.username}
+                  className="rounded-full h-7 w-7 object-cover"
+                />
+                <span onClick={clearUserProfile}>SignOut</span>
+              </div>
+            ) : (
+              "Login"
+            )}
           </Link>
         </ul>
       </div>
